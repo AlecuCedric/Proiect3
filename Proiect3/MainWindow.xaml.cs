@@ -20,5 +20,12 @@ namespace Proiect3
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Medic medicWindow = new Medic();
+            medicWindow.Show();  // Open the Medic window
+            this.Close();         // Optionally, close the main window
+        }
     }
 }

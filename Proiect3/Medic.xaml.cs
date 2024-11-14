@@ -21,7 +21,7 @@ namespace Proiect3
     /// </summary>
     public partial class Medic : Window
     {
-        private string connectionString = "Server=G713RS;Database=spitaldb;Trusted_Connection=True;";
+        private string connectionString = "Server=G713RS;Database=spitaldb;Trusted_Connection=True;Encrypt=False;";
         public Medic()
         {
             InitializeComponent();
@@ -58,7 +58,7 @@ namespace Proiect3
                 string query = "INSERT INTO Medic (NumeMedic, PrenumeMedic, Specializare) VALUES (@NumeMedic, @PrenumeMedic, @Specializare)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@NumeMedic", txtNumeMedic.Text);
-                cmd.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic);
+                cmd.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic.Text);
                 cmd.Parameters.AddWithValue("@Specializare", txtSpecializare.Text);
 
                 conn.Open();
