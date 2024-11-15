@@ -7,7 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="Medic Form" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click"/>
+        <Button Content="Medic Form" HorizontalAlignment="Center" VerticalAlignment="Top" Click="MedicForm_Click" Margin="0,105,0,0"/>
+        <Button Content="Pacient Form" HorizontalAlignment="Center" VerticalAlignment="Top" Click="PacientForm_Click" Margin="0,130,0,0"/>
+        <Button Content="Medicamente Form" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Medicamente_Click" Margin="0,155,0,0"/>
+        <Button Content="Consultatie Form" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Consultatie_Click" Margin="0,180,0,0"/>
 
     </Grid>
 </Window>

@@ -1,0 +1,33 @@
+﻿<Window x:Class="Proiect3.Pacient"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pacient" Height="400" Width="600">
+    <Grid>
+        <!-- Labels and TextBoxes for Medic details -->
+        <Label Content="CNP:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtCNP" HorizontalAlignment="Left" Margin="90,14,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Nume:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtNumePacient" HorizontalAlignment="Left" Margin="90,40,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Prenume:" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtPrenumePacient" HorizontalAlignment="Left" Margin="90,66,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Adresa:" HorizontalAlignment="Left" Margin="318,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtAdresa" HorizontalAlignment="Left" Margin="388,14,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Asigurare:" HorizontalAlignment="Left" Margin="320,36,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtAsigurare" HorizontalAlignment="Left" Margin="388,40,0,0" VerticalAlignment="Top" Width="200"/>
+        <!-- Add other fields similarly -->
+
+        <!-- DataGrid to show Pacient records -->
+        <DataGrid x:Name="dataGridPacient" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,100,10,50"/>
+
+        <!-- Buttons for CRUD operations -->
+        <Button Content="Add" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Width="80" Click="AddButton_Click"/>
+        <Button Content="Edit" HorizontalAlignment="Left" Margin="100,320,0,0" VerticalAlignment="Top" Width="80" Click="EditButton_Click"/>
+        <Button Content="Delete" HorizontalAlignment="Left" Margin="190,320,0,0" VerticalAlignment="Top" Width="80" Click="DeleteButton_Click"/>
+        <Button Content="Refresh" HorizontalAlignment="Left" Margin="280,320,0,0" VerticalAlignment="Top" Width="80" Click="RefreshButton_Click"/>
+        <Button Content="Done" HorizontalAlignment="Left" Margin="370,320,0,0" VerticalAlignment="Top" Click="DoneButton_Click" Width="80"/>
+    </Grid>
+</Window>

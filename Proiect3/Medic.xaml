@@ -22,6 +22,7 @@
         <Button Content="Edit" HorizontalAlignment="Left" Margin="100,320,0,0" VerticalAlignment="Top" Width="80" Click="EditButton_Click"/>
         <Button Content="Delete" HorizontalAlignment="Left" Margin="190,320,0,0" VerticalAlignment="Top" Width="80" Click="DeleteButton_Click"/>
         <Button Content="Refresh" HorizontalAlignment="Left" Margin="280,320,0,0" VerticalAlignment="Top" Width="80" Click="RefreshButton_Click"/>
-        
+        <Button Content="Done" HorizontalAlignment="Left" Margin="370,320,0,0" VerticalAlignment="Top" Width="80" Click="DoneButton_Click"/>
+
     </Grid>
 </Window>

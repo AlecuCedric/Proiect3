@@ -21,11 +21,28 @@ namespace Proiect3
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void MedicForm_Click(object sender, RoutedEventArgs e)
         {
             Medic medicWindow = new Medic();
             medicWindow.Show();  // Open the Medic window
             this.Close();         // Optionally, close the main window
+        }
+
+        private void PacientForm_Click(object sender, RoutedEventArgs e)
+        {
+            Pacient pacientWindow = new Pacient();
+            pacientWindow.Show();
+            this.Close();
+        }
+
+        private void Medicamente_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Consultatie_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
