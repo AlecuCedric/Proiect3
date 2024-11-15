@@ -44,7 +44,9 @@ namespace Proiect3
 
         private void Consultatie_Click(object sender, RoutedEventArgs e)
         {
-
+            Consultatie consultatieWindow = new Consultatie();
+            consultatieWindow.Show();
+            this.Close();
         }
     }
 }
