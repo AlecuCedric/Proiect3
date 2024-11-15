@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,16 +17,17 @@ using System.Windows.Shapes;
 namespace Proiect3
 {
     /// <summary>
-    /// Interaction logic for Pacient.xaml
+    /// Interaction logic for Medicamente.xaml
     /// </summary>
-    public partial class Pacient : Window
+    public partial class Medicamente : Window
     {
         private string connectionString = "Server=G713RS;Database=spitaldb;Trusted_Connection=True;Encrypt=False;";
-        public Pacient()
+        public Medicamente()
         {
             InitializeComponent();
             LoadData();
         }
+
         private void LoadData()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -35,10 +35,10 @@ namespace Proiect3
                 try
                 {
                     conn.Open();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM Pacient", conn);
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM Medicamente", conn);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
-                    dataGridPacient.ItemsSource = dataTable.DefaultView;
+                    dataGridMedicamente.ItemsSource = dataTable.DefaultView;
                     conn.Close();
                 }
                 catch (Exception ex)
@@ -56,13 +56,9 @@ namespace Proiect3
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Pacient (CNP, NumePacient, PrenumePacient, Adresa, Asigurare) VALUES (@CNP, @NumePacient, @PrenumePacient, @Adresa, @Asigurare)";
+                string query = "INSERT INTO Medicamente (Denumire) VALUES (@Denumire)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CNP", txtCNP.Text);
-                cmd.Parameters.AddWithValue("@NumePacient", txtNumePacient.Text);
-                cmd.Parameters.AddWithValue("@PrenumePacient", txtPrenumePacient.Text);
-                cmd.Parameters.AddWithValue("@Adresa", txtAdresa.Text);
-                cmd.Parameters.AddWithValue("@Asigurare", txtAsigurare.Text);
+                cmd.Parameters.AddWithValue("@Denumire", txtDenumire.Text);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
@@ -74,28 +70,25 @@ namespace Proiect3
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             // Check if a row is selected in the DataGrid
-            if (dataGridPacient.SelectedItem != null)
+            if (dataGridMedicamente.SelectedItem != null)
             {
                 // Cast the selected row into a DataRowView (or the type of your data model)
-                DataRowView row = (DataRowView)dataGridPacient.SelectedItem;
+                DataRowView row = (DataRowView)dataGridMedicamente.SelectedItem;
 
                 // Get the MedicID (primary key) of the selected record
-                long PacientID = (long)row["PacientID"];  // Adjust if the name is different
+                long MedicamentID = (long)row["MedicamentID"];  // Adjust if the name is different
 
                 // Create SQL query for updating the Medic table
-                string query = "UPDATE Pacient SET CNP = @CNP, NumePacient = @NumePacient, PrenumePacient = @PrenumePacient, Adresa = @Adresa, Asigurare = @Asigurare WHERE PacientID = @PacientID";
+                string query = "UPDATE Medicamente SET Denumire = @Denumire WHERE MedicamentID = @MedicamentID";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
 
                     // Add parameters for the SQL query
-                    cmd.Parameters.AddWithValue("PacientID", PacientID);
-                    cmd.Parameters.AddWithValue("@CNP", txtCNP.Text);
-                    cmd.Parameters.AddWithValue("@NumePacient", txtNumePacient.Text);  
-                    cmd.Parameters.AddWithValue("@PrenumePacient", txtPrenumePacient.Text); 
-                    cmd.Parameters.AddWithValue("@Adresa", txtAdresa.Text);
-                    cmd.Parameters.AddWithValue("@Asigurare", txtAsigurare.Text);
+                    cmd.Parameters.AddWithValue("MedicamentID", MedicamentID);
+                    cmd.Parameters.AddWithValue("@Denumire", txtDenumire.Text);
+                    
 
                     try
                     {
@@ -108,12 +101,12 @@ namespace Proiect3
                         // Check if any rows were affected
                         if (rowsAffected > 0)
                         {
-                            MessageBox.Show("Pacient updated successfully.");
+                            MessageBox.Show("Medicamente updated successfully.");
                             LoadData();  // Refresh the DataGrid
                         }
                         else
                         {
-                            MessageBox.Show("Pacient update failed. Please check the data and try again.");
+                            MessageBox.Show("Medicamente update failed. Please check the data and try again.");
                         }
                     }
                     catch (Exception ex)
@@ -131,13 +124,13 @@ namespace Proiect3
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             // Check if a row is selected in the DataGrid
-            if (dataGridPacient.SelectedItem != null)
+            if (dataGridMedicamente.SelectedItem != null)
             {
                 // Cast the selected row into a DataRowView (or the type of your data model)
-                DataRowView row = (DataRowView)dataGridPacient.SelectedItem;
+                DataRowView row = (DataRowView)dataGridMedicamente.SelectedItem;
 
                 // Get the MedicID (primary key) of the selected record
-                long PacientID = (long)row["PacientID"];  // Adjust if the name is different
+                long MedicamentID = (long)row["MedicamentID"];  // Adjust if the name is different
 
                 // Ask for confirmation before deleting the record
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this record?", "Delete Confirmation", MessageBoxButton.YesNo);
@@ -145,14 +138,14 @@ namespace Proiect3
                 if (result == MessageBoxResult.Yes)
                 {
                     // Create SQL query for deleting the Medic record
-                    string query = "DELETE FROM Pacient WHERE PacientID = @PacientID";
+                    string query = "DELETE FROM Medicamente WHERE MedicamentID = @MedicamentID";
 
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         SqlCommand cmd = new SqlCommand(query, conn);
 
                         // Add the MedicID parameter to the query
-                        cmd.Parameters.AddWithValue("@PacientID", PacientID);
+                        cmd.Parameters.AddWithValue("@MedicamentID", MedicamentID);
 
                         try
                         {

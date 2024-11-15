@@ -37,7 +37,9 @@ namespace Proiect3
 
         private void Medicamente_Click(object sender, RoutedEventArgs e)
         {
-
+            Medicamente medicamenteWindow = new Medicamente();
+            medicamenteWindow.Show();
+            this.Close();
         }
 
         private void Consultatie_Click(object sender, RoutedEventArgs e)
