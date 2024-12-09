@@ -5,13 +5,21 @@
     <Grid>
         <!-- Labels and TextBoxes for Medic details -->
         <Label Content="Data:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <DatePicker HorizontalAlignment="Left" Margin="121,11,0,0" VerticalAlignment="Top"/>
+        <DatePicker x:Name="datePickerData" HorizontalAlignment="Left" Margin="121,11,0,0" VerticalAlignment="Top" SelectedDateFormat="Short"/>
 
         <Label Content="Diagnostic:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtDiagnostic" HorizontalAlignment="Left" Margin="121,40,0,0" VerticalAlignment="Top" Width="200"/>
 
         <Label Content="DozaMedicament:" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtDozaMedicament" HorizontalAlignment="Left" Margin="121,66,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Medic:" HorizontalAlignment="Left" Margin="350,10,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name ="MedicComboBox" HorizontalAlignment="Left" Margin="435,12,0,0" VerticalAlignment="Top" Width="120" IsEditable="True" Text="Selectați medicul"/>
+        <Label Content="Pacient:" HorizontalAlignment="Left" Margin="350,36,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name ="PacientComboBox" HorizontalAlignment="Left" Margin="435,38,0,0" VerticalAlignment="Top" Width="120" IsEditable="True" Text="Selectați pacientul"/>
+
+        <Label Content="Medicamente:" HorizontalAlignment="Left" Margin="350,62,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name ="MedicamenteComboBox" HorizontalAlignment="Left" Margin="435,64,0,0" VerticalAlignment="Top" Width="120" IsEditable="True" Text="Selectați medicamentul"/>
         <!-- Add other fields similarly -->
 
         <!-- DataGrid to show Medic records -->
@@ -23,6 +31,5 @@
         <Button Content="Delete" HorizontalAlignment="Left" Margin="190,320,0,0" VerticalAlignment="Top" Width="80" Click="DeleteButton_Click"/>
         <Button Content="Refresh" HorizontalAlignment="Left" Margin="280,320,0,0" VerticalAlignment="Top" Width="80" Click="RefreshButton_Click"/>
         <Button Content="Done" HorizontalAlignment="Left" Margin="370,320,0,0" VerticalAlignment="Top" Width="80" Click="DoneButton_Click"/>
-
     </Grid>
 </Window>

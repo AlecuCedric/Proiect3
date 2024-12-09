@@ -26,6 +26,7 @@ namespace Proiect3
         {
             InitializeComponent();
             LoadData();
+            LoadComboBoxes();
         }
 
         private void LoadData()
@@ -34,93 +35,115 @@ namespace Proiect3
             {
                 try
                 {
-                    conn.Open();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM Consultatie", conn);
+                    string query = @"
+                SELECT 
+                    Consultatie.ConsultID,
+                    CONCAT(Medic.NumeMedic, ' ', Medic.PrenumeMedic) AS Medic,
+                    CONCAT(Pacient.NumePacient, ' ', Pacient.PrenumePacient) AS Pacient,
+                    Consultatie.Data,
+                    Consultatie.Diagnostic,
+                    Medicamente.Denumire AS Medicament,
+                    Consultatie.DozaMedicament
+                FROM Consultatie
+                JOIN Medic ON Consultatie.MedicID = Medic.MedicID
+                JOIN Pacient ON Consultatie.PacientID = Pacient.PacientID
+                JOIN Medicamente ON Consultatie.MedicamentID = Medicamente.MedicamentID";
+
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
                     dataGridConsultatie.ItemsSource = dataTable.DefaultView;
-                    conn.Close();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error: " + ex.Message);
-                }
-                finally
-                {
-                    conn.Close();
                 }
             }
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
+            if (datePickerData.SelectedDate == null ||
+                MedicComboBox.SelectedValue == null ||
+                PacientComboBox.SelectedValue == null ||
+                MedicamenteComboBox.SelectedValue == null)
+            {
+                MessageBox.Show("Completați toate câmpurile!");
+                return;
+            }
+
+            DateTime dataConsultatie = datePickerData.SelectedDate.Value;
+            long medicID = (long)MedicComboBox.SelectedValue;
+            long pacientID = (long)PacientComboBox.SelectedValue;
+            long medicamentID = (long)MedicamenteComboBox.SelectedValue;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Consultatie (Data, Diagnostic, DozaMedicament) VALUES (@Data, @Diagnostic, @DozaMedicament)";
+                string query = "INSERT INTO Consultatie (Data, Diagnostic, DozaMedicament, MedicID, PacientID, MedicamentID) " +
+                               "VALUES (@Data, @Diagnostic, @DozaMedicament, @MedicID, @PacientID, @MedicamentID)";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Data", txtData.Text);
+                cmd.Parameters.AddWithValue("@Data", dataConsultatie);
                 cmd.Parameters.AddWithValue("@Diagnostic", txtDiagnostic.Text);
                 cmd.Parameters.AddWithValue("@DozaMedicament", txtDozaMedicament.Text);
+                cmd.Parameters.AddWithValue("@MedicID", medicID);
+                cmd.Parameters.AddWithValue("@PacientID", pacientID);
+                cmd.Parameters.AddWithValue("@MedicamentID", medicamentID);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
+
+                MessageBox.Show("Consultatie adăugată cu succes!");
+                LoadData();
             }
-            LoadData(); // Refresh the DataGrid
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            // Check if a row is selected in the DataGrid
             if (dataGridConsultatie.SelectedItem != null)
             {
-                // Cast the selected row into a DataRowView (or the type of your data model)
                 DataRowView row = (DataRowView)dataGridConsultatie.SelectedItem;
+                int consultID = (int)row["ConsultID"];
 
-                // Get the MedicID (primary key) of the selected record
-                long ConsultID = (long)row["ConsultID"];  // Adjust if the name is different
+                if (datePickerData.SelectedDate == null ||
+                    MedicComboBox.SelectedValue == null ||
+                    PacientComboBox.SelectedValue == null ||
+                    MedicamenteComboBox.SelectedValue == null)
+                {
+                    MessageBox.Show("Completați toate câmpurile!");
+                    return;
+                }
 
-                // Create SQL query for updating the Medic table
-                string query = "UPDATE Consultatie SET Data = @Data, Diagnostic = @Diagnostic, DozaMedicament = @DozaMedicament WHERE ConsultID = @ConsultID";
+                DateTime dataConsultatie = datePickerData.SelectedDate.Value;
+                int medicID = (int)MedicComboBox.SelectedValue;
+                int pacientID = (int)PacientComboBox.SelectedValue;
+                int medicamentID = (int)MedicamenteComboBox.SelectedValue;
+
+                string query = "UPDATE Consultatie SET Data = @Data, Diagnostic = @Diagnostic, DozaMedicament = @DozaMedicament, " +
+                               "MedicID = @MedicID, PacientID = @PacientID, MedicamentID = @MedicamentID WHERE ConsultID = @ConsultID";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
-
-                    // Add parameters for the SQL query
-                    cmd.Parameters.AddWithValue("@ConsultID", ConsultID);
-                    cmd.Parameters.AddWithValue("@Data", txtData.Text);
+                    cmd.Parameters.AddWithValue("@Data", dataConsultatie);
                     cmd.Parameters.AddWithValue("@Diagnostic", txtDiagnostic.Text);
                     cmd.Parameters.AddWithValue("@DozaMedicament", txtDozaMedicament.Text);
+                    cmd.Parameters.AddWithValue("@MedicID", medicID);
+                    cmd.Parameters.AddWithValue("@PacientID", pacientID);
+                    cmd.Parameters.AddWithValue("@MedicamentID", medicamentID);
+                    cmd.Parameters.AddWithValue("@ConsultID", consultID);
 
-                    try
-                    {
-                        // Open the connection
-                        conn.Open();
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
 
-                        // Execute the query
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        // Check if any rows were affected
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Consultatie updated successfully.");
-                            LoadData();  // Refresh the DataGrid
-                        }
-                        else
-                        {
-                            MessageBox.Show("Consultatie update failed. Please check the data and try again.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: " + ex.Message);
-                    }
+                    MessageBox.Show("Consultatie actualizată cu succes!");
+                    LoadData();
                 }
             }
             else
             {
-                MessageBox.Show("Please select a row to edit.");
+                MessageBox.Show("Selectați un rând pentru editare.");
             }
         }
 
@@ -186,11 +209,46 @@ namespace Proiect3
         {
             LoadData();
         }
+
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow MainWindow = new MainWindow();
             MainWindow.Show();
             this.Close();
+        }
+
+        private void LoadComboBoxes()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Load Medici
+                SqlDataAdapter medicAdapter = new SqlDataAdapter("SELECT MedicID, CONCAT(NumeMedic, ' ', PrenumeMedic) AS NumeComplet FROM Medic", conn);
+                DataTable medicTable = new DataTable();
+                medicAdapter.Fill(medicTable);
+                MedicComboBox.ItemsSource = medicTable.DefaultView;
+                MedicComboBox.DisplayMemberPath = "NumeComplet";
+                MedicComboBox.SelectedValuePath = "MedicID";
+
+                // Load Pacienti
+                SqlDataAdapter pacientAdapter = new SqlDataAdapter("SELECT PacientID, CONCAT(NumePacient, ' ', PrenumePacient) AS NumeComplet FROM Pacient", conn);
+                DataTable pacientTable = new DataTable();
+                pacientAdapter.Fill(pacientTable);
+                PacientComboBox.ItemsSource = pacientTable.DefaultView;
+                PacientComboBox.DisplayMemberPath = "NumeComplet";
+                PacientComboBox.SelectedValuePath = "PacientID";
+
+                // Load Medicamente
+                SqlDataAdapter medicamenteAdapter = new SqlDataAdapter("SELECT MedicamentID, Denumire FROM Medicamente", conn);
+                DataTable medicamenteTable = new DataTable();
+                medicamenteAdapter.Fill(medicamenteTable);
+                MedicamenteComboBox.ItemsSource = medicamenteTable.DefaultView;
+                MedicamenteComboBox.DisplayMemberPath = "Denumire";
+                MedicamenteComboBox.SelectedValuePath = "MedicamentID";
+
+                conn.Close();
+            }
         }
     }
 }
