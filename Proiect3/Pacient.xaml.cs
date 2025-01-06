@@ -56,18 +56,53 @@ namespace Proiect3
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Pacient (CNP, NumePacient, PrenumePacient, Adresa, Asigurare) VALUES (@CNP, @NumePacient, @PrenumePacient, @Adresa, @Asigurare)";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@CNP", txtCNP.Text);
-                cmd.Parameters.AddWithValue("@NumePacient", txtNumePacient.Text);
-                cmd.Parameters.AddWithValue("@PrenumePacient", txtPrenumePacient.Text);
-                cmd.Parameters.AddWithValue("@Adresa", txtAdresa.Text);
-                cmd.Parameters.AddWithValue("@Asigurare", txtAsigurare.Text);
-
                 conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
+
+                try
+                {
+                    // Step 1: Insert into Users table
+                    string userQuery = "INSERT INTO Users (Username, PasswordHash, Role) VALUES (@Username, HASHBYTES('SHA2_256', @Password), @Role); SELECT SCOPE_IDENTITY();";
+                    using (SqlCommand cmdUser = new SqlCommand(userQuery, conn))
+                    {
+                        // Generate username and password
+                        string username = (txtNumePacient.Text + txtPrenumePacient.Text).ToLower();
+                        string password = username; // Initial password is the same as the username
+
+                        cmdUser.Parameters.AddWithValue("@Username", username);
+                        cmdUser.Parameters.AddWithValue("@Password", password);
+                        cmdUser.Parameters.AddWithValue("@Role", "User"); // Role is "User" for Pacient
+
+                        // Execute and get the new UserID
+                        int userId = Convert.ToInt32(cmdUser.ExecuteScalar());
+
+                        // Step 2: Insert into Pacient table
+                        string pacientQuery = "INSERT INTO Pacient (UserID, CNP, NumePacient, PrenumePacient, Adresa, Asigurare) VALUES (@UserID, @CNP, @NumePacient, @PrenumePacient, @Adresa, @Asigurare)";
+                        using (SqlCommand cmdPacient = new SqlCommand(pacientQuery, conn))
+                        {
+                            cmdPacient.Parameters.AddWithValue("@UserID", userId);
+                            cmdPacient.Parameters.AddWithValue("@CNP", txtCNP.Text);
+                            cmdPacient.Parameters.AddWithValue("@NumePacient", txtNumePacient.Text);
+                            cmdPacient.Parameters.AddWithValue("@PrenumePacient", txtPrenumePacient.Text);
+                            cmdPacient.Parameters.AddWithValue("@Adresa", txtAdresa.Text);
+                            cmdPacient.Parameters.AddWithValue("@Asigurare", txtAsigurare.Text);
+
+                            cmdPacient.ExecuteNonQuery();
+                        }
+                    }
+
+                    MessageBox.Show("Pacient added successfully!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
             }
+
+            // Refresh the DataGrid
             LoadData();
         }
 
@@ -193,7 +228,8 @@ namespace Proiect3
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow MainWindow = new MainWindow();
+            string username = "current_username";
+            MainWindow MainWindow = new MainWindow(username);
             MainWindow.Show();
             this.Close();
         }

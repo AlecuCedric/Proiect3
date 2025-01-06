@@ -53,19 +53,52 @@ namespace Proiect3
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString)) 
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Medic (NumeMedic, PrenumeMedic, Specializare) VALUES (@NumeMedic, @PrenumeMedic, @Specializare)";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@NumeMedic", txtNumeMedic.Text);
-                cmd.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic.Text);
-                cmd.Parameters.AddWithValue("@Specializare", txtSpecializare.Text);
-
                 conn.Open();
-                cmd.ExecuteNonQuery();
+
+                // Step 1: Insert into Users table
+                string userQuery = "INSERT INTO Users (Username, PasswordHash, Role) VALUES (@Username, HASHBYTES('SHA2_256', @Password), @Role); SELECT SCOPE_IDENTITY();";
+                using (SqlCommand cmdUser = new SqlCommand(userQuery, conn))
+                {
+                    // Generate username and password
+                    string username = (txtNumeMedic.Text + txtPrenumeMedic.Text).ToLower();
+                    string password = username; // Initial password is the same as the username
+
+                    cmdUser.Parameters.AddWithValue("@Username", username);
+                    cmdUser.Parameters.AddWithValue("@Password", password);
+                    cmdUser.Parameters.AddWithValue("@Role", "Admin");
+
+                    try
+                    {
+                        // Execute and get the new UserID
+                        int userId = Convert.ToInt32(cmdUser.ExecuteScalar());
+
+                        // Step 2: Insert into Medic table
+                        string medicQuery = "INSERT INTO Medic (UserID, NumeMedic, PrenumeMedic, Specializare) VALUES (@UserID, @NumeMedic, @PrenumeMedic, @Specializare)";
+                        using (SqlCommand cmdMedic = new SqlCommand(medicQuery, conn))
+                        {
+                            cmdMedic.Parameters.AddWithValue("@UserID", userId);
+                            cmdMedic.Parameters.AddWithValue("@NumeMedic", txtNumeMedic.Text);
+                            cmdMedic.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic.Text);
+                            cmdMedic.Parameters.AddWithValue("@Specializare", txtSpecializare.Text);
+
+                            cmdMedic.ExecuteNonQuery();
+                        }
+
+                        MessageBox.Show("Medic added successfully!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message);
+                    }
+                }
+
                 conn.Close();
             }
-            LoadData(); // Refresh the DataGrid
+
+            // Refresh the DataGrid
+            LoadData();
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -187,7 +220,8 @@ namespace Proiect3
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow MainWindow = new MainWindow();
+            string username = "current_username";
+            MainWindow MainWindow = new MainWindow(username);
             MainWindow.Show();
             this.Close();
         }

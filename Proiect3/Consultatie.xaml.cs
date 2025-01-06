@@ -212,7 +212,8 @@ namespace Proiect3
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow MainWindow = new MainWindow();
+            string username = "current_username";
+            MainWindow MainWindow = new MainWindow(username);
             MainWindow.Show();
             this.Close();
         }

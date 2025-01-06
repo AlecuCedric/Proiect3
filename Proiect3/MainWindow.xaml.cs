@@ -1,13 +1,4 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace Proiect3
 {
@@ -16,11 +7,40 @@ namespace Proiect3
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private string currentUsername;  // Replace this with actual username
+
+        public MainWindow(string username)
         {
             InitializeComponent();
+            currentUsername = username;
         }
 
+        // Redirect to Medic Form (Programarile Mele)
+        private void ProgramarileMeleButton_Click(object sender, RoutedEventArgs e)
+        {
+            Medic medicWindow = new Medic();
+            medicWindow.Show();  // Open the Medic window
+            this.Close();         // Optionally, close the main window
+        }
+
+        // Redirect to Change Password window
+        private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Pass the username to the ChangePasswordWindow constructor
+            ChangePasswordWindow changePasswordWindow = new ChangePasswordWindow(currentUsername);
+            changePasswordWindow.Show();  // Open the Change Password window
+            this.Close();                 // Optionally, close the main window
+        }
+
+        // Log out and return to Login page
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();  // Open the Login page
+            this.Close();        // Close the current window
+        }
+
+        // Admin Panel Button Clicks - These remain unchanged
         private void MedicForm_Click(object sender, RoutedEventArgs e)
         {
             Medic medicWindow = new Medic();
@@ -31,22 +51,22 @@ namespace Proiect3
         private void PacientForm_Click(object sender, RoutedEventArgs e)
         {
             Pacient pacientWindow = new Pacient();
-            pacientWindow.Show();
-            this.Close();
+            pacientWindow.Show();  // Open the Pacient window
+            this.Close();          // Optionally, close the main window
         }
 
         private void Medicamente_Click(object sender, RoutedEventArgs e)
         {
             Medicamente medicamenteWindow = new Medicamente();
-            medicamenteWindow.Show();
-            this.Close();
+            medicamenteWindow.Show();  // Open the Medicamente window
+            this.Close();              // Optionally, close the main window
         }
 
         private void Consultatie_Click(object sender, RoutedEventArgs e)
         {
             Consultatie consultatieWindow = new Consultatie();
-            consultatieWindow.Show();
-            this.Close();
+            consultatieWindow.Show();  // Open the Consultatie window
+            this.Close();              // Optionally, close the main window
         }
     }
 }
