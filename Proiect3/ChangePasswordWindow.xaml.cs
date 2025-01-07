@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Windows;
 using Microsoft.Data.SqlClient;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Proiect3
 {
     public partial class ChangePasswordWindow : Window
     {
         private string currentUsername;
+        private Window previousWindow; // Reference to the previous window
+        private string connectionString = "Server=G713RS;Database=spitaldb;Trusted_Connection=True;Encrypt=False;";
 
-        // Constructor that accepts the username
-        public ChangePasswordWindow(string username)
+        // Constructor that accepts the username and the previous window
+        public ChangePasswordWindow(string username, Window previousWindow)
         {
             InitializeComponent();
-            currentUsername = username;
+            this.currentUsername = username;
+            this.previousWindow = previousWindow; // Save the reference to reopen later
             txtUsername.Text = currentUsername;  // Display the username in the TextBox
         }
 
@@ -31,64 +32,64 @@ namespace Proiect3
                 return;
             }
 
-            // Update the password in the database
-            try
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string connectionString = "Server=G713RS;Database=spitaldb;Trusted_Connection=True;Encrypt=False;";
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                try
                 {
                     conn.Open();
 
-                    // Call the stored procedure to check if the current password is correct
-                    using (SqlCommand cmd = new SqlCommand("CheckCurrentPassword", conn))
+                    // Query to check if the current username and password hash exist in the database
+                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND PasswordHash = HASHBYTES('SHA2_256', @CurrentPassword)";
+                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
                     {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        checkCmd.Parameters.AddWithValue("@Username", currentUsername);
+                        checkCmd.Parameters.AddWithValue("@CurrentPassword", currentPassword);
 
-                        // Add parameters to the stored procedure
-                        cmd.Parameters.AddWithValue("@Username", currentUsername);
-                        cmd.Parameters.AddWithValue("@CurrentPassword", currentPassword);
-
-                        // Execute the stored procedure and get the result
-                        object resultObj = cmd.ExecuteScalar();
-
-                        // Check if the result is null and handle it safely
-                        if (resultObj != null)
+                        int count = (int)checkCmd.ExecuteScalar();
+                        if (count == 0)
                         {
-                            int result = (int)resultObj;
+                            MessageBox.Show("Current password is incorrect.");
+                            return;
+                        }
+                    }
 
-                            // If result is 0, the current password is incorrect
-                            if (result == 0)
-                            {
-                                MessageBox.Show("Current password is incorrect.");
-                                return;
-                            }
+                    // If valid, update the password
+                    string updateQuery = "UPDATE Users SET PasswordHash = HASHBYTES('SHA2_256', @NewPassword) WHERE Username = @Username";
+                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@Username", currentUsername);
+                        updateCmd.Parameters.AddWithValue("@NewPassword", newPassword);
+
+                        int rowsAffected = updateCmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Password updated successfully!");
+
+                            // Open the LoginWindow
+                            LoginWindow loginWindow = new LoginWindow();
+                            loginWindow.Show();
+
+                            // Close the current ChangePasswordWindow
+                            this.Close();
                         }
                         else
                         {
-                            MessageBox.Show("Error: Stored procedure returned null.");
-                            return;
+                            MessageBox.Show("Failed to update the password. Please try again.");
                         }
-
-                        // If the result is 1, the current password is correct
-                        // Update the password
-                        string updatePasswordQuery = "UPDATE Users SET PasswordHash = HASHBYTES('SHA2_256', @NewPassword) WHERE Username = @Username";
-                        using (SqlCommand updateCmd = new SqlCommand(updatePasswordQuery, conn))
-                        {
-                            updateCmd.Parameters.AddWithValue("@Username", currentUsername);
-                            updateCmd.Parameters.AddWithValue("@NewPassword", newPassword);
-                            updateCmd.ExecuteNonQuery();
-                        }
-
-                        MessageBox.Show("Password updated successfully!");
-                        this.Close(); // Close the change password window after success
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Show the previous window and close the ChangePasswordWindow
+            previousWindow.Show();
+            this.Close();
         }
     }
 }

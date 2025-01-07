@@ -18,18 +18,19 @@ namespace Proiect3
         // Redirect to Medic Form (Programarile Mele)
         private void ProgramarileMeleButton_Click(object sender, RoutedEventArgs e)
         {
-            Medic medicWindow = new Medic();
-            medicWindow.Show();  // Open the Medic window
-            this.Close();         // Optionally, close the main window
+            MyAppointmentsWindow appointmentsWin = new MyAppointmentsWindow(currentUsername, this);
+            // Optionally hide or close the current window:
+            this.Hide();
+            appointmentsWin.Show();
         }
 
         // Redirect to Change Password window
         private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            // Pass the username to the ChangePasswordWindow constructor
-            ChangePasswordWindow changePasswordWindow = new ChangePasswordWindow(currentUsername);
-            changePasswordWindow.Show();  // Open the Change Password window
-            this.Close();                 // Optionally, close the main window
+            // From MainWindow or another window
+            ChangePasswordWindow changePasswordWindow = new ChangePasswordWindow(currentUsername, this);
+            this.Hide(); // Hide the current window
+            changePasswordWindow.Show();
         }
 
         // Log out and return to Login page

@@ -37,8 +37,8 @@ namespace Proiect3
                         }
                         else if (role == "User")
                         {
-                            Pacient pacientWindow = new Pacient();
-                            pacientWindow.Show();
+                            RegularUserMainWindow RegularUserMainWindow = new RegularUserMainWindow(username);
+                            RegularUserMainWindow.Show();
                         }
                         this.Close();
                     }
