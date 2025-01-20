@@ -44,12 +44,14 @@ namespace Proiect3
                     }
                     else
                     {
-                        MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Invalid username or password.",
+                            "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error: {ex.Message}", "Database Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

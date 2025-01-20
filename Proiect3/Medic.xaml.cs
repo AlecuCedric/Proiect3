@@ -106,13 +106,12 @@ namespace Proiect3
             // Check if a row is selected in the DataGrid
             if (dataGridMedic.SelectedItem != null)
             {
-                // Cast the selected row into a DataRowView (or the type of your data model)
                 DataRowView row = (DataRowView)dataGridMedic.SelectedItem;
 
                 // Get the MedicID (primary key) of the selected record
-                long medicID = (long)row["MedicID"];  // Adjust if the name is different
+                long medicID = (long)row["MedicID"];
 
-                // Create SQL query for updating the Medic table
+                //SQL query for updating the Medic table
                 string query = "UPDATE Medic SET NumeMedic = @NumeMedic, PrenumeMedic = @PrenumeMedic, Specializare = @Specializare WHERE MedicID = @MedicID";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -121,9 +120,9 @@ namespace Proiect3
 
                     // Add parameters for the SQL query
                     cmd.Parameters.AddWithValue("@MedicID", medicID);
-                    cmd.Parameters.AddWithValue("@NumeMedic", txtNumeMedic.Text);  // Assuming txtNumeMedic is your TextBox for "Nume"
-                    cmd.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic.Text);  // Assuming txtPrenumeMedic is your TextBox for "Prenume"
-                    cmd.Parameters.AddWithValue("@Specializare", txtSpecializare.Text);  // Assuming txtSpecializare is your TextBox for "Specializare"
+                    cmd.Parameters.AddWithValue("@NumeMedic", txtNumeMedic.Text);
+                    cmd.Parameters.AddWithValue("@PrenumeMedic", txtPrenumeMedic.Text);
+                    cmd.Parameters.AddWithValue("@Specializare", txtSpecializare.Text);
 
                     try
                     {
@@ -160,11 +159,10 @@ namespace Proiect3
             // Check if a row is selected in the DataGrid
             if (dataGridMedic.SelectedItem != null)
             {
-                // Cast the selected row into a DataRowView (or the type of your data model)
                 DataRowView row = (DataRowView)dataGridMedic.SelectedItem;
 
                 // Get the MedicID (primary key) of the selected record
-                long medicID = (long)row["MedicID"];  // Adjust if the name is different
+                long medicID = (long)row["MedicID"];
 
                 // Ask for confirmation before deleting the record
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this record?", "Delete Confirmation", MessageBoxButton.YesNo);
@@ -178,7 +176,6 @@ namespace Proiect3
                     {
                         SqlCommand cmd = new SqlCommand(query, conn);
 
-                        // Add the MedicID parameter to the query
                         cmd.Parameters.AddWithValue("@MedicID", medicID);
 
                         try

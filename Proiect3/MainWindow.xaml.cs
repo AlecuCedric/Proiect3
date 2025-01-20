@@ -13,6 +13,7 @@ namespace Proiect3
         {
             InitializeComponent();
             currentUsername = username;
+            lblWelcome.Content = $"Welcome, {currentUsername}!";
         }
 
         // Redirect to Medic Form (Programarile Mele)

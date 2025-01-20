@@ -39,7 +39,8 @@ namespace Proiect3
                     conn.Open();
 
                     // Query to check if the current username and password hash exist in the database
-                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND PasswordHash = HASHBYTES('SHA2_256', @CurrentPassword)";
+                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND" +
+                        " PasswordHash = HASHBYTES('SHA2_256', @CurrentPassword)";
                     using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
                     {
                         checkCmd.Parameters.AddWithValue("@Username", currentUsername);
@@ -54,7 +55,8 @@ namespace Proiect3
                     }
 
                     // If valid, update the password
-                    string updateQuery = "UPDATE Users SET PasswordHash = HASHBYTES('SHA2_256', @NewPassword) WHERE Username = @Username";
+                    string updateQuery = "UPDATE Users SET PasswordHash = " +
+                        "HASHBYTES('SHA2_256', @NewPassword) WHERE Username = @Username";
                     using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
                     {
                         updateCmd.Parameters.AddWithValue("@Username", currentUsername);
